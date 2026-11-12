@@ -1,0 +1,11 @@
+[Unit]
+Description=Agent mailbox MCP gateway (127.0.0.1:8787)
+After=network-online.target herdr-core.service
+[Service]
+# Public https origin that clients see (used in OAuth metadata). Example: https://agents.example.com
+Environment=MBX_BASE=https://agents.example.com
+ExecStart=/usr/bin/node %h/agent-mailbox/server/server.mjs serve
+Restart=always
+NoNewPrivileges=true
+[Install]
+WantedBy=default.target

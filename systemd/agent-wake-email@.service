@@ -1,0 +1,10 @@
+[Unit]
+Description=Email-wake agent %i when its inbox gets a new line
+[Service]
+# wake-%i.env holds WAKE_LOG and WAKE_TO (see wake/email_wake.py)
+EnvironmentFile=%h/agent-mailbox/wake-%i.env
+ExecStart=/usr/bin/python3 %h/agent-mailbox/wake/email_wake.py
+Restart=always
+RestartSec=10
+[Install]
+WantedBy=default.target

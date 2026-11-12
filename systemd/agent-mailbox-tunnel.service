@@ -1,0 +1,11 @@
+[Unit]
+Description=Cloudflare tunnel -> agent mailbox MCP gateway
+After=network-online.target agent-mailbox-mcp.service
+[Service]
+# tunnel.env (chmod 600) holds one line: TUNNEL_TOKEN=<token from the Cloudflare dashboard>.
+# cloudflared reads TUNNEL_TOKEN from the environment, so the token never appears in the process list.
+EnvironmentFile=%h/agent-mailbox/tunnel.env
+ExecStart=/usr/local/bin/cloudflared tunnel --no-autoupdate run
+Restart=always
+[Install]
+WantedBy=default.target

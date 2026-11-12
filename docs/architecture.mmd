@@ -1,0 +1,22 @@
+flowchart LR
+  subgraph Owner side
+    O[Owner on Slack] --> L[Lead agent<br/>always-on, e.g. on a Mac mini]
+  end
+  subgraph Mailbox host[Mailbox host: small Linux VM]
+    HC[herdr-core server]
+    IN[inbox-AGENT terminal<br/>box.sh -> inbox-AGENT.log]
+    OUT[outbox-AGENT terminal<br/>box.sh -> outbox-AGENT.log]
+    MCP[MCP gateway server.mjs<br/>127.0.0.1:8787<br/>whoami / list_my_messages / send_message]
+    W[email_wake.py<br/>tails inbox log]
+    HC --- IN
+    HC --- OUT
+  end
+  T[Cloudflare tunnel<br/>https://agents.example.com/mcp]
+  A[External agent<br/>cloud / web / sandbox]
+  L -- "hc send machine/inbox-AGENT" --> IN
+  OUT -- "tail outbox log / hc events (title)" --> L
+  IN -. new line .-> W
+  W -- "email to the agent's own address" --> A
+  A -- "OAuth or bearer over HTTPS" --> T --> MCP
+  MCP -- reads --> IN
+  MCP -- "hc send outbox-AGENT" --> OUT

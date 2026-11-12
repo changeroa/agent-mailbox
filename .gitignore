@@ -1,0 +1,6 @@
+state.json
+state.json.tmp
+*.env
+.smtp
+*.log
+node_modules/
