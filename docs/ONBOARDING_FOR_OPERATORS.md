@@ -47,6 +47,14 @@ herdr-core events --terminal mbx/<tN of outbox-foo>
 
 Subscribe by terminal address (tN), and re-resolve it by name after the mailbox terminals are recreated. A receiver that kept the old address is the reason one of our agents went silent for 18 hours. Add an alarm on your side for "no ack within N minutes".
 
+### Reaching the mailbox host over two networks
+
+The lead agent's `herdr-core machine add --via "ssh ..."` is only as reliable as that SSH path. If the host is on two private networks (for example a private mesh and Tailscale), use `scripts/ssh-route.sh` as the `ProxyCommand`: it tries `ROUTE_PRIMARY` and falls back to `ROUTE_FALLBACK`, with `HostKeyAlias` so both addresses share one host key. Setup is in the script header. Set `ROUTE_LOG` to see which path each connection used.
+
+## 4b. Chat apps (optional)
+
+To let people reach an agent from Slack, run the Slack adapter for that agent's mailbox pair: [adapters/slack/README.md](../adapters/slack/README.md). One bot per agent; add more instances of `agent-slack-bridge@NAME` for more bots. The agent replies by writing `slack:CHANNEL/TS body` to its outbox, using the `reply=` address from the inbox line.
+
 ## 5. Test
 
 1. `herdr-core send mbx/inbox-foo "test 1: reply ack test 1 then done test 1"`

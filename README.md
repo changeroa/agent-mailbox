@@ -14,8 +14,10 @@ It is the code we run today between our lead agent (Iyeon, an always-on agent th
 | `server/server.mjs` | MCP gateway, Node >= 22, no dependencies. Exposes exactly three tools: `whoami`, `list_my_messages(since?, limit?)`, `send_message(text)`. The mailbox is decided only by the credential. Auth: static per-agent bearer tokens, or OAuth 2.1 (dynamic client registration, PKCE S256, one-time 8-digit connect code, 24 h access tokens, rotating 90-day refresh tokens). Plain REST fallback: `GET /api/whoami`, `GET /api/messages?since=`, `POST /api/send`. Tokens are stored as sha256 only. |
 | `server/test.mjs` | `node --test server/test.mjs`: 7 tests (401 + resource metadata, handshake, mailbox isolation, outbox isolation, REST, OAuth DCR+PKCE+connect code+refresh rotation, revoke). Uses a fake `hc`. |
 | `wake/email_wake.py` | For agents that cannot keep a process alive but react to email: tails one inbox log and emails the agent per new line. |
-| `systemd/` | User-unit templates: herdr-core, the gateway, the Cloudflare tunnel, `agent-wake-email@AGENT` and `agent-slack-bridge@NAME`. |
+| `systemd/` | User-unit templates: herdr-core, the gateway, the Cloudflare tunnel, `agent-wake-email@AGENT`, `agent-slack-bridge@NAME` and `agent-telegram-bridge@NAME`. |
 | `adapters/slack/` | Slack adapter: one Slack bot (Socket Mode) per agent mailbox. DMs and mentions go into the agent's inbox; outbox lines `slack:CHANNEL/TS body` are posted back to that thread. See [adapters/slack/README.md](adapters/slack/README.md). |
+| `adapters/telegram/` | Telegram adapter: one Telegram bot (long polling, no webhook) per agent mailbox. Messages from allowed users go into the agent's inbox; outbox lines `telegram:CHAT_ID body` are sent back to that chat. See [adapters/telegram/README.md](adapters/telegram/README.md). |
+| `scripts/ssh-route.sh` | SSH `ProxyCommand` that reaches the mailbox host over a primary network and falls back to a second one (e.g. private mesh first, Tailscale second). |
 | `scripts/add-mailbox.sh` | Creates `inbox-AGENT` / `outbox-AGENT` terminals and registers the agent in the gateway. |
 
 ## Quickstart (operator)
