@@ -10,7 +10,13 @@ flowchart LR
     W[email_wake.py<br/>tails inbox log]
     HC --- IN
     HC --- OUT
+    S[Slack adapter<br/>adapters/slack/bridge.mjs<br/>Socket Mode]
   end
+  P[People and bots on Slack]
+  P -- "DM / @mention" --> S
+  S -- "hc send inbox-AGENT" --> IN
+  OUT -- "slack:C/TS body" --> S
+  S -- "thread reply" --> P
   T[Cloudflare tunnel<br/>https://agents.example.com/mcp]
   A[External agent<br/>cloud / web / sandbox]
   L -- "hc send machine/inbox-AGENT" --> IN
