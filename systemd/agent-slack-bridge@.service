@@ -1,0 +1,14 @@
+# Slack adapter, one instance per bot: systemctl --user enable --now agent-slack-bridge@NAME
+# Reads ~/agent-mailbox/slack-NAME.env (chmod 600), see adapters/slack/example.env.
+[Unit]
+Description=Slack bot %i <-> agent mailbox
+After=network-online.target herdr-core.service
+
+[Service]
+EnvironmentFile=%h/agent-mailbox/slack-%i.env
+ExecStart=/usr/bin/env node %h/agent-mailbox/adapters/slack/bridge.mjs
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target
