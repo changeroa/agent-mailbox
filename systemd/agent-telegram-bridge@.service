@@ -1,0 +1,14 @@
+# Telegram adapter, one instance per bot: systemctl --user enable --now agent-telegram-bridge@NAME
+# Reads ~/agent-mailbox/telegram-NAME.env (chmod 600), see adapters/telegram/example.env.
+[Unit]
+Description=Telegram bot %i <-> agent mailbox
+After=network-online.target herdr-core.service
+
+[Service]
+EnvironmentFile=%h/agent-mailbox/telegram-%i.env
+ExecStart=/usr/bin/env node %h/agent-mailbox/adapters/telegram/bridge.mjs
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target
